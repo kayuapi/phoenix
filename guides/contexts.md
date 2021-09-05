@@ -724,11 +724,11 @@ We won't focus on a real user authentication system at this point, but by the ti
 + alias Hello.ShoppingCart
 +
 + def fetch_current_cart(conn, _opts) do
-+   if cart = ShoppingCart.get_cart_by_user_uuid(conn.assigns.current_uuid) do
-+     assign(conn, :cart, cart)
-+   else
-+     {:ok, new_cart} = ShoppingCart.create_cart(conn.assigns.current_uuid)
-+     assign(conn, :cart, new_cart)
++   case ShoppingCart.get_cart_by_user_uuid(conn.assigns.current_uuid) do
++     nil -> 
++       with {:ok, new_cart} <- ShoppingCart.create_cart(conn.assigns.current_uuid) do
++         assign(conn, :cart, new_cart)
++     cart -> assign(conn, :cart, cart)
 +   end
 + end
 ```
